@@ -192,27 +192,6 @@ def normalized_cross_correlation_matrix(img, template):
     Xr = np.matmul(Pr, Fr)
     output_Xr = np.reshape(Xr, (Ho, Wo))
     response = output_Xr / (magnitude_filter * np.sum(template))
-    
-    # #2d
-    # #magnitude transformation
-    # magnitude_filter = np.zeros((Ho, Wo))
-    # for row in range(Ho):
-    #     for col in range(Wo):
-    #         for k_row in range(Hk):
-    #             for k_col in range(Wk):
-    #                 magnitude_filter[row, col] += img[row + k_row, col + k_col]
-    # #img transformation
-    # Pr = np.zeros((Ho + Wo, Hk + Wk))
-    # for row in range(Ho):
-    #     for col in range(Wo):
-    #         for k_row in range(Hk):
-    #             for k_col in range(Wk):
-    #                 Pr[row + col, k_row + k_col] = img[row + k_row, col + k_col]
-    # #kernel transformtion
-    # Fr = np.reshape(template, (Hk + Wk, 1))
-    # Xr = np.matmul(Pr, Fr)
-    # output_Xr = np.reshape(Xr, (Ho, Wo))
-    # response = output_Xr / (magnitude_filter * np.sum(template))
     """ Your code ends here """
     return response
 
@@ -246,23 +225,8 @@ def non_max_suppression(response, suppress_range, threshold=None):
         res[col, row] = 255
         thresholded_arr[row - H_range:row + H_range, col - W_range:col + W_range] = 0 #ask if its 2*H_range*2*W_range or (2*H_range + 1)*(2*W_range + 1)
         # local_maximum = local_maximum.append(row, col)
-    # for 
-    # local_maximum = []
-    # position = [(-1, -1)]
-    # H_range, W_range = suppress_range
-    # for row in range(response.shape[0]):
-    #     for col in range(response.shape[1]):
-    #         pix = response[row, col]
-    #         if pix < threshold:
-    #             response_copy = 0
-    #         if response[row, col] > local_maximum:
-    #             position = position.append((row, col))
-    #             local_maximum = local_maximum.append(response[row, col])
-#ask if its 2*H_range*2*W_range or (2*H_range + 1)*(2*W_range + 1)
-    # response_copy[position[0] - H_range:position[0] + H_range, position[1] - W_range:position[1] + W_range] = 0
-    # local_maximum = np.max(thresholded_arr)
     """ Your code ends here """
-    return res
+    return resf
 
 ##### Part 4: Question And Answer #####
     
