@@ -59,8 +59,30 @@ def gray2grad(img):
     
 
     """ Your code starts here """
-    
-    # img_grad_h = 
+    img_copy = pad_zeros(img, 1, 1, 1, 1)
+    Hi, Wi = np.shape(img_copy)
+    Ho = Hi - 2
+    Wo = Wi - 2
+    img_grad_h = np.zeros((Ho, Wo))
+    for row in range(Ho):
+        for col in range(Wo):
+            img_window = img_copy[row:row + 3, col:col + 3].copy()
+            img_grad_h[row, col] = np.sum(sobelh[:, :] * img_window)
+    img_grad_v = np.zeros((Ho, Wo))
+    for row in range(Ho):
+        for col in range(Wo):
+            img_window = img_copy[row:row + 3, col:col + 3].copy()
+            img_grad_v[row, col] = np.sum(sobelv[:, :] * img_window)
+    img_grad_d1 = np.zeros((Ho, Wo))
+    for row in range(Ho):
+        for col in range(Wo):
+            img_window = img_copy[row:row + 3, col:col + 3].copy()
+            img_grad_d1[row, col] = np.sum(sobeld1[:, :] * img_window)
+    img_grad_d2 = np.zeros((Ho, Wo))
+    for row in range(Ho):
+        for col in range(Wo):
+            img_window = img_copy[row:row + 3, col:col + 3].copy()
+            img_grad_d2[row, col] = np.sum(sobeld2[:, :] * img_window)
     """ Your code ends here """
     return img_grad_h, img_grad_v, img_grad_d1, img_grad_d2
 
@@ -226,7 +248,7 @@ def non_max_suppression(response, suppress_range, threshold=None):
         thresholded_arr[row - H_range:row + H_range, col - W_range:col + W_range] = 0 #ask if its 2*H_range*2*W_range or (2*H_range + 1)*(2*W_range + 1)
         # local_maximum = local_maximum.append(row, col)
     """ Your code ends here """
-    return resf
+    return res
 
 ##### Part 4: Question And Answer #####
     
