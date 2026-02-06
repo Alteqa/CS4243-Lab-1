@@ -140,18 +140,21 @@ def normalized_cross_correlation(img, template):
 
     """ Your code starts here """
     response = np.zeros((Ho, Wo))
-    template_magnitude = np.sum(template)
+    template_copy = template.astype(np.float64)
+    img_copy = img.astype(np.float64)
+    template_magnitude = np.sqrt(np.sum(template_copy ** 2))
     for row in range(Ho):
         for col in range(Wo):
-            window_magnitude = np.sum(img[row:row + Hk, col:col + Wk, :])
+            window = img_copy[row:row + Hk, col:col + Wk, :]
+            window_magnitude = np.sqrt(np.sum(window ** 2))
             sum = 0
             for k_row in range(Hk):
                 for k_col in range(Wk):
                     for k_pix in range(3):
-                        sum += (template[k_row, k_col, k_pix] * img[row + k_row, col + k_col, k_pix]) / (window_magnitude * template_magnitude)
-            response[row, col] = sum        
+                        sum += (template_copy[k_row, k_col, k_pix] * img_copy[row + k_row, col + k_col, k_pix]) / (window_magnitude * template_magnitude)
+            response[row, col] = sum    
     """ Your code ends here """
-    return response                       
+    return response               
 
 def normalized_cross_correlation_fast(img, template):
     """
@@ -169,12 +172,14 @@ def normalized_cross_correlation_fast(img, template):
 
     """ Your code starts here """
     response = np.zeros((Ho, Wo))
-    template_magnitude = np.sum(template)
+    template_copy = template.astype(np.float64)
+    img_copy = img.astype(np.float64)
+    template_magnitude = np.sqrt(np.sum(template_copy ** 2))
     for row in range(Ho):
         for col in range(Wo):
-            img_window = img[row:row + Hk, col:col + Wk, :].copy()
-            window_magnitude = np.sum(img_window)
-            output_kernel = template[:, :, :] * img_window
+            img_window = img_copy[row:row + Hk, col:col + Wk, :].copy()
+            window_magnitude = np.sqrt(np.sum(img_window ** 2))
+            output_kernel = template_copy[:, :, :] * img_window
             output_value = np.sum(output_kernel) / (template_magnitude * window_magnitude)
             response[row, col] = output_value
     """ Your code ends here """
@@ -198,22 +203,26 @@ def normalized_cross_correlation_matrix(img, template):
     Wo = Wi - Wk + 1
 
     """ Your code starts here """   
-    #3d
+    template_copy = template.astype(np.float64)
+    img_copy = img.astype(np.float64)
     magnitude_filter = np.zeros((Ho, Wo))
     for row in range(Ho):
         for col in range(Wo):
-            sum = np.sum(img[row:row + Hk, col:col + Wk, :].copy())
+            window_magnitude = img_copy[row:row + Hk, col:col + Wk, :]
+            sum = np.sqrt(np.sum(window_magnitude ** 2))
+            # sum = np.sum(img[row:row + Hk, col:col + Wk, :])
             magnitude_filter[row, col] = sum
+    # magnitude_filter = np.sqrt(np.sum(template ** template))
     Pr = np.zeros((Ho * Wo, 3 * Hk * Wk))
     for row in range(Ho):
         for col in range(Wo):
-            window = img[row:row + Hk, col:col + Wk, :].copy()
+            window = img_copy[row:row + Hk, col:col + Wk, :].copy()
             reshaped_window = np.reshape(window, (1, 3 * Hk * Wk))
             Pr[row * Wo + col] = reshaped_window
-    Fr = np.reshape(template, (3 * Hk * Wk, 1))
+    Fr = np.reshape(template_copy, (3 * Hk * Wk, 1))
     Xr = np.matmul(Pr, Fr)
     output_Xr = np.reshape(Xr, (Ho, Wo))
-    response = output_Xr / (magnitude_filter * np.sum(template))
+    response = output_Xr / (magnitude_filter * np.sqrt(np.sum(template_copy ** 2)))
     """ Your code ends here """
     return response
 
@@ -240,11 +249,10 @@ def non_max_suppression(response, suppress_range, threshold=None):
     """ Your code starts here """
     H_range, W_range = suppress_range
     thresholded_arr = np.where(response < threshold, 0, response)
-    # local_maximum = [] #check if need data type
     res = np.zeros(response.shape)
     if np.max(thresholded_arr) > 0:
         row, col = np.unravel_index(np.argmax(thresholded_arr), thresholded_arr.shape)
-        res[col, row] = 255
+        res[col, row] = 1
         thresholded_arr[row - H_range:row + H_range, col - W_range:col + W_range] = 0 #ask if its 2*H_range*2*W_range or (2*H_range + 1)*(2*W_range + 1)
         # local_maximum = local_maximum.append(row, col)
     """ Your code ends here """
