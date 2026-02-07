@@ -250,11 +250,14 @@ def non_max_suppression(response, suppress_range, threshold=None):
     H_range, W_range = suppress_range
     thresholded_arr = np.where(response < threshold, 0, response)
     res = np.zeros(response.shape)
-    if np.max(thresholded_arr) > 0:
+    while np.max(thresholded_arr) > 0:
         row, col = np.unravel_index(np.argmax(thresholded_arr), thresholded_arr.shape)
-        res[col, row] = 1
-        thresholded_arr[row - H_range:row + H_range, col - W_range:col + W_range] = 0 #ask if its 2*H_range*2*W_range or (2*H_range + 1)*(2*W_range + 1)
-        # local_maximum = local_maximum.append(row, col)
+        res[row, col] = 1
+        r0 = max(0, row - H_range)
+        r1 = min(thresholded_arr.shape[0], row + H_range)
+        c0 = max(0, col - W_range)
+        c1 = min(thresholded_arr.shape[1], col + W_range)
+        thresholded_arr[r0:r1, c0:c1] = 0
     """ Your code ends here """
     return res
 
