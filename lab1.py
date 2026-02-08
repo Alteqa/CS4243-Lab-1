@@ -171,17 +171,31 @@ def normalized_cross_correlation_fast(img, template):
     Wo = Wi - Wk + 1
 
     """ Your code starts here """
-    response = np.zeros((Ho, Wo))
-    template_copy = template.astype(np.float64)
-    img_copy = img.astype(np.float64)
-    template_magnitude = np.sqrt(np.sum(template_copy ** 2))
-    for row in range(Ho):
-        for col in range(Wo):
-            img_window = img_copy[row:row + Hk, col:col + Wk, :].copy()
-            window_magnitude = np.sqrt(np.sum(img_window ** 2))
-            output_kernel = template_copy[:, :, :] * img_window
-            output_value = np.sum(output_kernel) / (template_magnitude * window_magnitude)
-            response[row, col] = output_value
+    #2d
+    if len(img.shape) == 2:
+        response = np.zeros((Ho, Wo))
+        template_copy = template.astype(np.float64)
+        img_copy = img.astype(np.float64)
+        template_magnitude = np.sqrt(np.sum(template_copy ** 2))
+        for row in range(Ho):
+            for col in range(Wo):
+                img_window = img_copy[row:row + Hk, col:col + Wk].copy()
+                window_magnitude = np.sqrt(np.sum(img_window ** 2))
+                output_kernel = template_copy[:, :] * img_window
+                output_value = np.sum(output_kernel) / (template_magnitude * window_magnitude)
+                response[row, col] = output_value
+    else:
+        response = np.zeros((Ho, Wo))
+        template_copy = template.astype(np.float64)
+        img_copy = img.astype(np.float64)
+        template_magnitude = np.sqrt(np.sum(template_copy ** 2))
+        for row in range(Ho):
+            for col in range(Wo):
+                img_window = img_copy[row:row + Hk, col:col + Wk, :].copy()
+                window_magnitude = np.sqrt(np.sum(img_window ** 2))
+                output_kernel = template_copy[:, :, :] * img_window
+                output_value = np.sum(output_kernel) / (template_magnitude * window_magnitude)
+                response[row, col] = output_value
     """ Your code ends here """
     return response
 
