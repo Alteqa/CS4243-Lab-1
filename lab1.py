@@ -292,7 +292,44 @@ def normalized_cross_correlation_ms(img, template):
     Wo = Wi - Wk + 1
 
     """ Your code starts here """
-
+    if len(img.shape) == 2:
+        response = np.zeros((Ho, Wo))
+        template_copy = template.astype(np.float64)
+        img_copy = img.astype(np.float64)
+        template_mean = np.sum(template_copy) / np.size(template_copy)
+        F_prime = template_copy - template_mean
+        template_magnitude = np.sqrt(np.sum(F_prime ** 2))
+        for row in range(Ho):
+            for col in range(Wo):
+                img_window = img_copy[row:row + Hk, col:col + Wk].copy()
+                window_mean = np.sum(img_window) / np.size(img_window)
+                P_prime = img_window - window_mean
+                window_magnitude = np.sqrt(np.sum(P_prime ** 2))
+                output_kernel = template_copy * P_prime
+                output_value = np.sum(output_kernel) / (template_magnitude * window_magnitude)
+                response[row, col] = output_value
+    else:
+        response = np.zeros((Ho, Wo))
+        template_copy = template.astype(np.float64)
+        f_prime = np.zeros(np.shape(template_copy))
+        for pix in range(3):
+            template_slice = template_copy[:, :, pix]
+            template_mean = np.sum(template_slice) / (np.size(template_slice))
+            f_prime[:, :, pix] = template[:, :, pix] - template_mean
+        template_magnitude = np.sqrt(np.sum(f_prime ** 2))
+        img_copy = img.astype(np.float64)
+        for row in range(Ho):
+            for col in range(Wo):
+                img_window = img_copy[row:row + Hk, col:col + Wk, :].copy()
+                p_prime = np.zeros(np.shape(img_window))
+                for pix in range(3):
+                    window_slice = img_window[:, :, pix]
+                    window_mean = np.sum(window_slice) / (np.size(window_slice))
+                    p_prime[:, :, pix] = img_window[:, :, pix] - window_mean
+                window_magnitude = np.sqrt(np.sum(p_prime ** 2))
+                output_kernel = f_prime * p_prime
+                output_value = np.sum(output_kernel) / (template_magnitude * window_magnitude)
+                response[row, col] = output_value
     """ Your code ends here """
     return response
 
