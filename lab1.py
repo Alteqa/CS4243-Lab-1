@@ -104,7 +104,7 @@ def pad_zeros(img, pad_height_bef, pad_height_aft, pad_width_bef, pad_width_aft)
     """
     height, width = img.shape[:2]
     new_height, new_width = (height + pad_height_bef + pad_height_aft), (width + pad_width_bef + pad_width_aft)
-    img_pad = np.zeros((new_height, new_width), dtype=int) if len(img.shape) == 2 else np.zeros((new_height, new_width, img.shape[2]), dtype=int)
+    img_pad = np.zeros((new_height, new_width), dtype=img.dtype) if len(img.shape) == 2 else np.zeros((new_height, new_width, img.shape[2]), dtype=img.dtype)
     #pads if dimensions are 2 or 3
     """ Your code starts here """
     if len(img.shape) == 3:
